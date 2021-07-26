@@ -1,0 +1,15 @@
+{% extends "layout.html"%}
+
+{% block title %}Failure{% endblock %}
+
+{#https://stackoverflow.com/a/30011819/6556801#}
+{% block javascript %}
+<script src="{{url_for('static', filename='js/failure redirect.js')}}"></script>
+{% endblock %}
+
+{% block body %}
+<h1>Failure:</h1>
+<p>
+    You failed to submit a form. You will be redirected to the form page. <br>
+</p>
+{% endblock %}

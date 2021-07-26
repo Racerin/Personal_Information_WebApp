@@ -1,0 +1,19 @@
+{% extends "layout.html"%}
+
+{% block title %}
+Success
+{% endblock %}
+
+{% block body %}
+<h1>Success</h1>
+<p>
+    You have submitted a form of personal information. <br>
+    Click <a href="{{ url_for('form') }}">here</a> to submit another form. <br>
+    The following are the persons submitted already. <br>
+    <ul>
+        {% for person in persons %}
+        <li>{{ person }}</li>
+        {% endfor %}
+    </ul>
+</p>
+{% endblock %}
