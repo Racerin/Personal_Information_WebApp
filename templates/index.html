@@ -1,22 +1,17 @@
 {% extends "layout.html" %}
 
-{% block title %}Personal Information{% endblock %}
+{% block title %}Macho Website{% endblock %}
+
+
+{# {% block head %} super() {% endblock %} #}
+
 
 {% block body %}
-<h1>Personal Information</h1>
-<form action={{ url_for("register") }} autocomplete="off" method="POST">
-    <label for="first_name">First Name:</label> <br>
-    <input autofocus name="first_name" placeholder="John"> <br>
-    <label for="last_name">Last Name:</label> <br>
-    <input name="last_name" placeholder="Smith"> <br>
-    <label for="age">Age:</label> <br>
-    <input type="number" name="age"> <br>
-    <!-- <label for="gender">Gender:</label> <br> -->
-    <select name="gender">
-        <option value="Gender" disbaled selected>Prefix</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-    </select>
-    <br> <input type="submit" target="_blank"></input>
-</form>
+<h1>Welcome to my website</h1>
+<pre>
+    May all your wishes come through.
+    I love you.
+    Too soon?
+    I'm a bafooon.
+</pre>
 {% endblock %}

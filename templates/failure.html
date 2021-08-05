@@ -3,7 +3,8 @@
 {% block title %}Failure{% endblock %}
 
 {#https://stackoverflow.com/a/30011819/6556801#}
-{% block javascript %}
+{% block head %}
+{{ super() }}
 <script src="{{url_for('static', filename='js/failure redirect.js')}}"></script>
 {% endblock %}
 

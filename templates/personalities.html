@@ -1,0 +1,34 @@
+{% macro person_section(prn) -%}
+<section>
+    <h3>{{prn.name}} </h3>
+    <p>prn.desciption</p>
+</section>
+{%- endblock %}
+
+
+{% extends "layout" %}
+
+
+{% block title %}Meet the Personalities{% endblock %}
+
+
+{% block body %}
+<article>
+    <p>Meet the persons submitted to the website.</p>
+    <section>
+        <h2>Person</h2>
+        <p>Some random description of a person.</p>
+    </section>
+    {% for person in persons %}
+    {{ person_section(person) }}
+    {% endfor %}
+    <aside>
+        <pre>
+            Do you want to place your ad here?
+            Contact me and we will do business.
+            Bada bing. Bada boom. Everyone is happy.
+            Your happy, I'm happy, whats the issue?
+        </pre>
+    </aside>
+</article>
+{% endblock %}

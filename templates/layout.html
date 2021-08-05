@@ -2,10 +2,49 @@
 
 <html lang="en">
     <head>
-        <title>{% block title %}{% endblock %}</title>
-        {% block javascript %}{% endblock %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=0.5">
+        <title>{% block title %}Nothing in Particular{% endblock %}</title>
+        <meta name="description" content="Personal Information you would like to submit.">
+        <meta name="author" content="Darnell Baird">
+        <meta name="keyword" content="personal,darnell,trinidad">
+        <meta name="theme-color" content="#16800e" media="(prefers-color-scheme:dark">
+        <meta name="color-scheme" content="dark">
+        <meta property="og.title" content="Personal Information">
+        <meta property="og.type" content="Website">
+        <meta property="og.url" content="https://www.example.com">
+        <meta property="og.description" content="Submit information on a person.">
+        <meta property="og.image" content="{{ url_for('static', filename='mai pik.jpeg') }}">
+        {% block head %}
+        {# Space for things such as javascript and css #}
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/default.css') }}">
+        {% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        <!-- <nav  role="navigation"></nav> -->
+        <header>
+            <div class="logo_nav"><img src="{{ url_for('static', filename='home.jpeg') }}">MY LOGO</img></div>
+            <nav>
+                <a href="{{ url_for('home') }}">Home</a>
+                <a href="{{ url_for('about') }}">About</a>
+                <a href="{{ url_for('form') }}">Persons</a>
+                <a href="{{ url_for('contact') }}">Contact</a>
+            </nav>
+            <nav class="user_account">
+                {% if session["username"] %}
+                    <a href="{{ url_for('login') }}">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}">Login</a>
+                    <a href="{{ url_for('signup') }}">Signup</a>
+                {% endif %}
+            </nav>
+        </header>
+        <main>
+            {% block body %}{% endblock %}
+        </main>
+        <footer>
+            <h2>{{ url_for('static',filename='css/default.css') }}</h2>
+            <h2>{{ url_for('signup') }}</h2>
+        </footer>
     </body>
 </html>

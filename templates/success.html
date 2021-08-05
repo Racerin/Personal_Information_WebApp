@@ -1,8 +1,7 @@
 {% extends "layout.html"%}
 
-{% block title %}
-Success
-{% endblock %}
+{% block title %}Success{% endblock %}
+{% block head %} super() {% endblock %}
 
 {% block body %}
 <h1>Success</h1>
@@ -12,7 +11,8 @@ Success
     The following are the persons submitted already. <br>
     <ul>
         {% for person in persons %}
-        <li>{{ person }}</li>
+        <li>{{ person.success_rep() }}</li>
+        <!-- <li>{{ person }}</li> -->
         {% endfor %}
     </ul>
 </p>
