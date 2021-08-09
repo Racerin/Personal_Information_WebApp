@@ -1,4 +1,4 @@
-import ast, enum, copy
+import ast, enum, copy, types
 from collections.abc import Collection
 from dataclasses import dataclass, fields, Field, asdict
 import PARAM
@@ -29,8 +29,19 @@ class Person():
     maiden_name : str = ""
     last_name : str = ""
     birthday : str = ""
-    gender : PARAM.GENDER = PARAM.GENDER.UNDEFINED
+    gender : str = PARAM.GENDER.UNDEFINED
     description : str = "Hi!"
+    title : str = PARAM.TITLE.NONE
+
+    _gender = gender
+
+    @property
+    def gender(self): 
+        return self._gender
+        
+    @gender.setter
+    def gender(self, val):
+        return PARAM.GENDER.assign(val)
 
     necessary_fields = ['first_name', 'last_name',]
 
@@ -39,13 +50,45 @@ class Person():
         return f"{self.first_name} {self.last_name}"
 
     @classmethod
-    def from_dict(cls, multidict1):
-        """Constructs an object from the arguments passed into 'request' at the moment. Return the object."""
+    def _filter_from_dict(cls, nm, val):
+        """Filter attribute from client to 'Person' object."""
+        #Any necessary filtering place here.
+        return val
+
+    @staticmethod
+    def _get_val_from_dict(dict1, name, type1) -> "types.Type[type]":
+        """Get value from a multidict variable w.r.t class 'Person'."""
+        try:
+            val = dict1.get(name, type=type1)   #https://stackoverflow.com/a/12551565/6556801
+            return val
+        except TypeError:
+            if isinstance(type1, PARAM.GENDER):
+                return dict1[name]
+                # return attr1
+
+
+    @classmethod
+    def from_dict1(cls, multidict1) -> "Person":
+        """Constructs an object from the arguments passed into 'request' at that moment and thread. """
         self = cls()
         #https://stackoverflow.com/a/51953411/6556801
         field_types = cls.field_types()
-        for nm,type1 in field_types.items():
-            val = multidict1.get(nm, type=type1)   #https://stackoverflow.com/a/12551565/6556801
+        for nm, type1 in field_types.items():
+            val = cls._get_val_from_dict(multidict1, nm, type1)
+            val = cls._filter_from_dict(nm, val)
+            setattr(self, nm, val)
+        return self
+
+    @classmethod
+    def from_dict(cls, multidict1) -> "Person":
+        """Constructs an object from the arguments passed into 'request' at that moment and thread. """
+        self = cls()
+        #https://stackoverflow.com/a/51953411/6556801
+        field_types = cls.field_types()
+        for nm, type1 in field_types.items():
+            # val = cls._get_val_from_dict(multidict1, nm, type1)
+            val = multidict1.get(nm, type=type1)
+            val = cls._filter_from_dict(nm, val)
             setattr(self, nm, val)
         return self
 

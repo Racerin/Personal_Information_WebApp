@@ -6,11 +6,11 @@ from Library import Database, Person, CustomFlask
 import Library
 
 
+app = Flask(__name__)
+
+
 # database = Database.JsonDatabase()
 database = Database.SQLiteDatabase(filename=PARAM.DATABASE.FILENAME)
-
-
-app = Flask(__name__)
 
 
 app.secret_key = b"fslku89utwknt5w49iwjifsi9384uq9439-3"
@@ -21,6 +21,12 @@ app.session_interface.session_class = CustomFlask.MySession
 app.config["DEBUG"] = True
 # app.config["ENV"] = "production" #default value
 app.config["TESTING"] = True
+
+
+#Jinja Config
+def print2(obj): print(obj); return obj
+app.jinja_env.filters['print'] = print2
+
 
 
 @app.route("/")
@@ -56,22 +62,22 @@ def signup():
         return render_template(PARAM.HTML.SIGNUP)
 
 
-@app.route("/form")
+@app.route("/form", methods=["POST", "GET"])
 def form():
-    return render_template(PARAM.HTML.FORM)
-
-
-@app.route("/register", methods=["POST"])
-def register():
-    """Register a new 'person' to the database."""
-    person = Library.Person.from_dict(request.form)
-    if person.valid():
-        database.register_person(person)
-        # return render_template(PARAM.HTML.SUBMIT_SUCCESS, persons=database.get_persons())
-        # return redirect("/success")
-        return redirect(url_for("success"))
-    else:
-        return render_template(PARAM.HTML.SUBMIT_FAILURE)
+    """Form for registering a personality."""
+    if request.method == "GET":
+        return render_template(PARAM.HTML.FORM, genders=PARAM.GENDER.FORM)
+    elif request.method == "POST":
+        print("This is FORM:", request.form)
+        person = Library.Person.from_dict(request.form)
+        if person.valid():
+            print("GT Boss: ", person)
+            database.register_person(person)
+            # return render_template(PARAM.HTML.SUBMIT_SUCCESS, persons=database.get_persons())
+            # return redirect("/success")
+            return redirect(url_for("success"))
+        else:
+            return render_template(PARAM.HTML.SUBMIT_FAILURE)
 
 
 @app.route("/success")
@@ -103,8 +109,8 @@ def others(filename):
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return "Page not found: Hard lux"
-    # render_template(PARAM.HTML.ERROR404)
+    # return "Page not found: Hard lux"
+    render_template(PARAM.HTML.ERROR404)
 
 
 @app.errorhandler(500)

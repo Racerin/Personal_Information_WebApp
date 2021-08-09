@@ -1,5 +1,6 @@
-from Library import Person, User
 import os, json, time, sqlite3
+import PARAM
+from Library import Person, User
 from dataclasses import dataclass
 
 
@@ -53,11 +54,22 @@ class JsonDatabase():
 class SQLiteDatabase():
     filename : str = "::memory::"
 
+
+    
+
+
     def __post_init__(self):
         #Open File
         self.conn = sqlite3.connect(self.filename)
         #Run database setup
         self.database_setup()
+
+    def execute(self, *args, **kwargs):
+        """Wrapped function for executing queries within database of name 'self.filename'."""
+        with sqlite3.connect(self.filename) as conn:
+            conn.row_factory = sqlite3.Row
+            ans = conn.execute(*args, **kwargs)
+            return ans
 
     def database_setup(self):
         """Create required properties and tables for the database if dont exist."""
@@ -75,20 +87,22 @@ class SQLiteDatabase():
             MNAME VARCHAR(20), 
             LNAME VARCHAR(20) NOT NULL,
             BIRTHDAY DATE,
-            GENDER CHAR,
-            USER_SUBMITTED_ID INTEGER
+            GENDER CHAR(10),
+            DESCRIPTION TEXT
             );""",
         ]
         for sql in sqls:
-            with self.conn as conn:
-                conn.execute(sql)
+            self.execute(sql)
+            # with self.conn as conn:
+            #     conn.execute(sql)
 
     def create_user(self, user):
         """Adds user to database"""
         values = self.create_user_attributes(user)
         sql1 = """INSERT INTO USERS (USERNAME, PASSWORD) VALUES (?,?);"""
-        with self.conn as conn:
-            conn.execute(sql1, values)
+        self.execute(sql1, values)
+        # with self.conn as conn:
+        #     conn.execute(sql1, values)
 
     def valid_login(self, username, password):
         """Returns True if valid user credentials, else False"""
@@ -113,21 +127,35 @@ class SQLiteDatabase():
     def register_person(self, person):
         """Adds 'person' to database"""
         sql1 = """INSERT INTO PERSONALITIES (
-            FNAME, MAIDENNAME, MNAME, LNAME, BIRTHDAY, GENDER, USER_SUBMITTED_ID
+                FNAME, 
+                MAIDENNAME, 
+                MNAME, 
+                LNAME, 
+                BIRTHDAY, 
+                GENDER,
+                DESCRIPTION
             ) VALUES (
-                :first_name, :maiden_name, :middle_name, :last_name, :birthday, :gender, :description
+                :first_name, 
+                :maiden_name, 
+                :middle_name, 
+                :last_name, 
+                :birthday, 
+                :gender,
+                :description
             );"""
-        with self.conn as conn:
-            conn.execute(sql1, vars(person))
+        self.execute(sql1, vars(person))
+        # with self.conn as conn:
+        #     conn.execute(sql1, vars(person))
 
     def _row_to_person(self, row) -> Person:
         """Converts a 'row' object to a Person"""
         person = Person(
-            first_name=row["FNAME"], 
+            first_name=row["FNAME"],
             middle_name=row["MNAME"],
             maiden_name=row["MAIDENNAME"],
             last_name=row["LNAME"],
             birthday=date_format(row["BIRTHDAY"], 'sqlite', 'person'),
+            gender=PARAM.GENDER.verify(row["GENDER"]),
             description=row["DESCRIPTION"],
             )
         return person
@@ -136,11 +164,16 @@ class SQLiteDatabase():
         """Returns a list of 'Person' objects from database."""
         #Get database information
         sql1 = "SELECT * FROM PERSONALITIES"
-        with self.conn as conn:
-            rows = conn.execute(sql1)
+        # with self.conn as conn:
+        #     rows = conn.execute(sql1)
+        rows = self.execute(sql1)
         #Get values of rows and put each values into person object.
         persons = []
         for r in rows:
             person = self._row_to_person(r)
             persons.append(person)
         return persons
+
+    def close(self):
+        """Closes SQLite Database """
+        self.conn.close()

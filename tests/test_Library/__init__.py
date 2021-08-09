@@ -1,5 +1,5 @@
-import unittest
-import Library
+import unittest, sys
+import Library, PARAM
 from Library import Person
 
 
@@ -31,8 +31,52 @@ class TestLibrary(unittest.TestCase):
 
 
 class TestPerson(unittest.TestCase):
+    def setUp(self):
+        self.valid_person = Person(
+            first_name="Darnell",
+            middle_name="Regan Saleem",
+            last_name="Baird",
+            birthday="",
+            gender=PARAM.GENDER.MALE,
+            description="A legitimate Person."
+            )
+        self.female = Person(
+            first_name="Desiree",
+            middle_name="",
+            last_name="",
+            birthday="",
+            gender=PARAM.GENDER.FEMALE,
+            description="My mother."
+        )
+        # return super().setUp()
+
+    def test_initialisation(self):
+        #Throw Error for the following
+        kwargs_error = [
+            # ({}, TypeError),
+            # ({"first_name":1}, TypeError)
+        ]
+        try:
+            for kwargs, err in kwargs_error:
+                with self.assertRaises(err):
+                    Person(**kwargs)
+        except AssertionError as err:
+            print(kwargs, err)
+            raise AssertionError(f"kwargs: '{kwargs}', Error: '{err}'.") from err
+
     def test_valid(self):
         pass
+
+    def test_from_dict(self):
+        valid_multidicts = [
+            dict(first_name="Darnell", last_name="Baird"),
+        ]
+        valid_multidicts_ans = [
+            Person(first_name="Darnell", last_name="Baird")
+        ]
+        for multidict, ans in zip(valid_multidicts, valid_multidicts_ans):
+            psn = Person.from_dict(multidict)
+            self.assertEqual(psn, ans)
 
 
 if __name__ == "__main__":
