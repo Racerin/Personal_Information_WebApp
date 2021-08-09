@@ -5,19 +5,33 @@
 
 {% block body %}
 <h1>Personal Information</h1>
-<form action="{{ url_for('register') }}" autocomplete="off" method="POST">
+<form action="{{ url_for('form') }}" autocomplete="off" method="POST">
     <label for="first_name">First Name:</label> <br>
     <input autofocus name="first_name" placeholder="John"> <br>
+    <!-- Middle Name -->
+    <label for="middle_name">Middle Name:</label> <br>
+    <input name="middle_name" > <br>
+    <!-- Maiden name -->
+    <label for="maiden_name">Maiden Name:</label> <br>
+    <input name="maiden_name" > <br>
+    <!-- Last name -->
     <label for="last_name">Last Name:</label> <br>
     <input name="last_name" placeholder="Smith"> <br>
-    <label for="age">Age:</label> <br>
-    <input type="number" name="age"> <br>
-    <!-- <label for="gender">Gender:</label> <br> -->
-    <select name="gender">
-        <option value="Gender" disbaled selected>Prefix</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
+    <!-- Birthday -->
+    <label for="birthday">Birthday:</label> <br>
+    <input type="date" name="birthday"> <br>
+    <!-- Gender -->
+    <label for="gender">Gender:</label>
+    <select name='gender'>
+        {% for gender in genders %}
+        <option value='{{gender}}'>{{gender|title}}</option>
+        <p>{{gender}}</p>
+        {% endfor %}
     </select>
+    <!-- Description -->
+    </b><label for="description">Description:</label>
+    <input type="text" name="description">
+    <!-- Submit Form -->
     <br> <input type="submit" target="_blank"></input>
 </form>
 {% endblock %}

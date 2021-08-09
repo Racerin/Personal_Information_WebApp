@@ -14,16 +14,16 @@
         <meta property="og.type" content="Website">
         <meta property="og.url" content="https://www.example.com">
         <meta property="og.description" content="Submit information on a person.">
-        <meta property="og.image" content="{{ url_for('static', filename='mai pik.jpeg') }}">
+        <meta property="og.image" content="{{ url_for('static', filename='images/mai pik.jpeg') }}">
         {% block head %}
-        {# Space for things such as javascript and css #}
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/default.css') }}">
+        {# Allocated lines for things such as javascript and css #}
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/layout.css') }}">
         {% endblock %}
     </head>
     <body>
         <!-- <nav  role="navigation"></nav> -->
         <header>
-            <div class="logo_nav"><img src="{{ url_for('static', filename='home.jpeg') }}">MY LOGO</img></div>
+            <div class="logo_nav"><img src="{{ url_for('static', filename='images/home.jpeg') }}" alt="Website Logo"></img></div>
             <nav>
                 <a href="{{ url_for('home') }}">Home</a>
                 <a href="{{ url_for('about') }}">About</a>
