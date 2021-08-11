@@ -66,30 +66,17 @@ class Person():
                 return dict1[name]
                 # return attr1
 
-
-    @classmethod
-    def from_dict1(cls, multidict1) -> "Person":
-        """Constructs an object from the arguments passed into 'request' at that moment and thread. """
-        self = cls()
-        #https://stackoverflow.com/a/51953411/6556801
-        field_types = cls.field_types()
-        for nm, type1 in field_types.items():
-            val = cls._get_val_from_dict(multidict1, nm, type1)
-            val = cls._filter_from_dict(nm, val)
-            setattr(self, nm, val)
-        return self
-
     @classmethod
     def from_dict(cls, multidict1) -> "Person":
         """Constructs an object from the arguments passed into 'request' at that moment and thread. """
         self = cls()
         #https://stackoverflow.com/a/51953411/6556801
         field_types = cls.field_types()
-        for nm, type1 in field_types.items():
-            # val = cls._get_val_from_dict(multidict1, nm, type1)
-            val = multidict1.get(nm, type=type1)
-            val = cls._filter_from_dict(nm, val)
-            setattr(self, nm, val)
+        for key, type1 in field_types.items():
+            # val = cls._get_val_from_dict(multidict1, key, type1)
+            val = multidict1.get(key, type1())
+            val = cls._filter_from_dict(key, val)
+            setattr(self, key, val)
         return self
 
     @classmethod
@@ -135,8 +122,20 @@ class Person():
 class User():
     username : str
     password : str
-    # salted_password : bytes = b""
+
+    def __post_init__(self):
+        """Instantiation after dataclass implementation"""
+        pass
 
     def salted_password(self) -> bytes:
         """Returns a salted password."""
-        pass
+        #NB. FOR NOW, USE THIS.
+        return self.password.encode()
+
+    def username_password(self):
+        return self.username, self.password
+
+    @classmethod
+    def dumb_user(cls):
+        self = cls(username="Foo", password="Password#1234")
+        return self

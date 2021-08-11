@@ -52,10 +52,9 @@ class JsonDatabase():
 
 @dataclass
 class SQLiteDatabase():
+
     filename : str = "::memory::"
-
-
-    
+    schema_path : str = "schema.sql"
 
 
     def __post_init__(self):
@@ -72,29 +71,12 @@ class SQLiteDatabase():
             return ans
 
     def database_setup(self):
-        """Create required properties and tables for the database if dont exist."""
-        #Instantiate properties
-        #Create table if not exist
-        sqls = ["""CREATE TABLE IF NOT EXISTS 'USERS' (
-            ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-            USERNAME VARCHAR(50) NOT NULL,
-            PASSWORD CHAR(20) NOT NULL
-        );""",
-        """CREATE TABLE IF NOT EXISTS 'PERSONALITIES' (
-            ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-            FNAME VARCHAR(20) NOT NULL, 
-            MAIDENNAME VARCHAR(20),
-            MNAME VARCHAR(20), 
-            LNAME VARCHAR(20) NOT NULL,
-            BIRTHDAY DATE,
-            GENDER CHAR(10),
-            DESCRIPTION TEXT
-            );""",
-        ]
-        for sql in sqls:
-            self.execute(sql)
-            # with self.conn as conn:
-            #     conn.execute(sql)
+        """
+        Create required properties and tables for the database if dont exist.
+        Created from a .sql file.
+        """
+        with open(self.schema_path) as file:
+            self.conn.executescript(file.read())
 
     def create_user(self, user):
         """Adds user to database"""
