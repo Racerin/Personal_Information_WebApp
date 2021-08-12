@@ -48,36 +48,37 @@ class TestPerson(unittest.TestCase):
             gender=PARAM.GENDER.FEMALE,
             description="My mother."
         )
-        # return super().setUp()
 
     def test_initialisation(self):
+        """
+        'Person' class: 
+        Ensure errors are thrown for invalid instantiation. 
+        Ensure instantiation creates valid objects.
+        """
         #Throw Error for the following
         kwargs_error = [
-            # ({}, TypeError),
+            ({}, TypeError),
             # ({"first_name":1}, TypeError)
         ]
-        try:
-            for kwargs, err in kwargs_error:
-                with self.assertRaises(err):
-                    Person(**kwargs)
-        except AssertionError as err:
-            print(kwargs, err)
-            raise AssertionError(f"kwargs: '{kwargs}', Error: '{err}'.") from err
-
-    def test_valid(self):
-        pass
+        for kwargs, err in kwargs_error:
+            msg = str((kwargs, err))
+            with self.assertRaises(err, msg=msg):
+                Person(**kwargs)
 
     def test_from_dict(self):
+        """Test the method, 'from_dict'."""
         valid_multidicts = [
             dict(first_name="Darnell", last_name="Baird"),
         ]
-        valid_multidicts_ans = [
+        answers = [
             Person(first_name="Darnell", last_name="Baird")
         ]
-        for multidict, ans in zip(valid_multidicts, valid_multidicts_ans):
+        for multidict, ans in zip(valid_multidicts, answers):
             psn = Person.from_dict(multidict)
-            #UNITTEST IS ASSERTING BADLY. Might have to override 'Person's '__eq__' dunder method
-            # self.assertEqual(psn, ans)
+            #Error message
+            dict_comp = {nm:getattr(ans,nm)==getattr(psn,nm) for nm in Person.field_names()}
+            msg = str(dict_comp)
+            self.assertEqual(psn, ans, msg=msg)
 
 
 if __name__ == "__main__":

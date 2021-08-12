@@ -55,34 +55,22 @@ class Person():
         #Any necessary filtering place here.
         return val
 
-    @staticmethod
-    def _get_val_from_dict(dict1, name, type1) -> "types.Type[type]":
-        """Get value from a multidict variable w.r.t class 'Person'."""
-        try:
-            val = dict1.get(name, type=type1)   #https://stackoverflow.com/a/12551565/6556801
-            return val
-        except TypeError:
-            if isinstance(type1, PARAM.GENDER):
-                return dict1[name]
-                # return attr1
-
     @classmethod
     def from_dict(cls, multidict1) -> "Person":
         """Constructs an object from the arguments passed into 'request' at that moment and thread. """
         self = cls()
         #https://stackoverflow.com/a/51953411/6556801
-        field_types = cls.field_types()
-        for key, type1 in field_types.items():
-            # val = cls._get_val_from_dict(multidict1, key, type1)
-            val = multidict1.get(key, type1())
-            val = cls._filter_from_dict(key, val)
-            setattr(self, key, val)
+        for field in fields(cls):
+            def_val = field.default if hasattr(field, 'default') else field.type()
+            val = multidict1.get(field.name, def_val)
+            val = cls._filter_from_dict(field.name, val)
+            setattr(self, field.name, val)
         return self
 
     @classmethod
-    def field_types(cls) -> dict:
-        """Returns a dictionary of field_name:field_type attributes"""
-        return {field.name:field.type for field in fields(cls)}
+    def field_names(cls) -> tuple:
+        """Returns a tuple of field names."""
+        return tuple((field.name for field in fields(cls)))
 
     def valid(self) -> bool:
         """Response on whether data supplied is sufficient for submitting to database/file."""
@@ -116,6 +104,14 @@ class Person():
         gender = gender if gender else PARAM.GENDER.UNDEFINED   #deals with 'None'
         dict1.update({'gender':gender.value})
         return dict1
+
+    def __eq__(self, other):
+        bool1 = False
+        if isinstance(other, Person):
+            #If all values of 'Person' fields are equal between objects, return 'True'.
+            bool1 = all([getattr(self, key) == getattr(other, key) for key in Person.field_names()])
+        bool2 = super().__eq__(other)
+        return any((bool1, bool2))
 
 
 @dataclass
