@@ -49,6 +49,12 @@ def login():
         return redirect(url_for("index"))
     else:
         return render_template(PARAM.HTML.LOGIN)
+        
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    """Logout an existing account"""
+    return "Shit"
 
 
 @app.route("/create_account", methods=["GET", "POST"])
@@ -109,7 +115,6 @@ def others(filename):
 
 @app.errorhandler(404)
 def page_not_found(error):
-    # return "Page not found: Hard lux"
     render_template(PARAM.HTML.ERROR404)
 
 
