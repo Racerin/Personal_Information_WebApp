@@ -41,7 +41,7 @@ class Person():
         
     @gender.setter
     def gender(self, val):
-        return PARAM.GENDER.assign(val)
+        self._gender = PARAM.GENDER.assign(val)
 
     necessary_fields = ['first_name', 'last_name',]
 
